@@ -39,13 +39,6 @@ function getHandler(url) {
   return handlers[url] || notFound;
 }
 
-function readall(req, res, cb) {
-  fs.readFile('./articles.json', (err, data) => {
-    if(err) console.error('[ERROR] Some error in read file')
-    cb(null, JSON.parse(data));
-  });
-}
-
 function read(req, res, cb) {
   fs.readFile('./article.json', (err, data) => {
     if(err) console.error('[ERROR] Some error in read file')
@@ -78,18 +71,4 @@ function removeComment() {
 
 function notFound(req, res, cb) {
   cb({ code: 404, message: 'Not found'});
-}
-
-function parseBodyJson(req, cb) {
-  let body = [];
-
-  req.on('data', function(chunk) {
-    body.push(chunk);
-  }).on('end', function() {
-    body = Buffer.concat(body).toString();
-
-    let params = JSON.parse(body);
-
-    cb(null, params);
-  });
 }
