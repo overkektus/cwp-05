@@ -1,3 +1,4 @@
+const fs = require('fs');
 
 module.exports.readAll = (req, res, payload, cb) => {
   fs.readFile('./articles.json', (err, data) => {

@@ -1,11 +1,12 @@
 const http = require('http');
 const fs = require('fs');
 
+const { readAll } = require('./handlers/readAll');
+
 const hostname = '127.0.0.1';
 const port = 3000;
-
 const handlers = {
-  '/api/articles/readall': readall,
+  '/api/articles/readall': readAll,
   '/api/articles/read': read,
   '/api/articles/create': createArticle,
   '/api/articles/update': updateArticle,
@@ -15,19 +16,22 @@ const handlers = {
 };
 
 const server = http.createServer((req, res) => {
-  const handler = getHandler(req.url);
+  parseBodyJson(req, (err, payload) => {
 
-  handler(req, res, (err, result) => {
-    if (err) {
-      res.statusCode = err.code;
+    const handler = getHandler(req.url);
+
+    handler(req, res, payload, (err, result) => {
+      if (err) {
+        res.statusCode = err.code;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(err));
+        return;
+      }
+
+      res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(err));
-      return;
-    }
-
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(result));
+      res.end(JSON.stringify(result));
+    });
   });
 });
 
@@ -71,4 +75,17 @@ function removeComment() {
 
 function notFound(req, res, cb) {
   cb({ code: 404, message: 'Not found'});
+}
+
+function parseBodyJson(req, cb) {
+  let body = [];
+  req.on('data', (chunk) => { body.push(chunk); })
+      .on('end', () => {
+          body = Buffer.concat(body).toString();
+          let params;
+          if (body !== "") {
+              params = JSON.parse(body);
+          }
+          cb(null, params);
+      });
 }
