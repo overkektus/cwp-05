@@ -1,7 +1,9 @@
 const http = require('http');
+const url = require('url');
 const fs = require('fs');
 
 const { readAll } = require('./handlers/readAll');
+const { read } = require('./handlers/read');
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -18,7 +20,8 @@ const handlers = {
 const server = http.createServer((req, res) => {
   parseBodyJson(req, (err, payload) => {
 
-    const handler = getHandler(req.url);
+    let pathname = url.parse(req.url, true).pathname;
+    const handler = getHandler(pathname);
 
     handler(req, res, payload, (err, result) => {
       if (err) {
@@ -43,18 +46,8 @@ function getHandler(url) {
   return handlers[url] || notFound;
 }
 
-function read(req, res, cb) {
-  fs.readFile('./article.json', (err, data) => {
-    if(err) console.error('[ERROR] Some error in read file')
-    const articles = JSON.parse(data);
-    cb(null, articles.map(article => {
-      if(article.id === req.id) return
-    }));
-  });
-}
-
 function createArticle() {
-
+  
 }
 
 function updateArticle() {
@@ -73,7 +66,7 @@ function removeComment() {
   
 }
 
-function notFound(req, res, cb) {
+function notFound(req, res, payload, cb) {
   cb({ code: 404, message: 'Not found'});
 }
 
