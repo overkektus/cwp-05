@@ -4,6 +4,7 @@ const fs = require('fs');
 
 const { readAll } = require('./handlers/readAll');
 const { read } = require('./handlers/read');
+const { createArticle } = require('./handlers/createArticle');
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -44,10 +45,6 @@ server.listen(port, hostname, () => {
 
 function getHandler(url) {
   return handlers[url] || notFound;
-}
-
-function createArticle() {
-  
 }
 
 function updateArticle() {
