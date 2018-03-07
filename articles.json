@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "title": "Some title",
+    "text": "olololo some text",
+    "date": 15423643653,
+    "author": "Egor",
+    "comments": [
+      {
+        "id": 1,
+        "articleId": 1,
+        "text": "comment",
+        "date": 15423644460,
+        "author": "Dimas"
+      }
+    ]
+  }
+]
